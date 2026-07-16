@@ -55,4 +55,6 @@ export const api = {
   sources: () => get<SourceHealth[]>("/sources"),
   refresh: () => post<{ new: number; fetched: number }>("/refresh"),
   markRead: () => post<{ ok: boolean }>("/mark-read"),
+  exportUrl: (kind: "csv" | "pdf", filters: ItemFilters = {}) =>
+    `${API_BASE}/export.${kind}?${qs(filters)}`,
 };

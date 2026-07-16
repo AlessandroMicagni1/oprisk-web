@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { Download, FileText, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FilterBar } from "@/components/filter-bar";
@@ -77,10 +77,18 @@ export default function Home() {
             EUR-Lex legislation database.
           </p>
         </div>
-        <Button onClick={refresh} disabled={refreshing} variant="outline" size="sm">
-          <RefreshCw className={refreshing ? "mr-2 h-4 w-4 animate-spin" : "mr-2 h-4 w-4"} />
-          {refreshing ? "Fetching…" : "Refresh"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => window.open(api.exportUrl("csv", filters), "_blank")}>
+            <Download className="mr-2 h-4 w-4" /> CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => window.open(api.exportUrl("pdf", filters), "_blank")}>
+            <FileText className="mr-2 h-4 w-4" /> PDF
+          </Button>
+          <Button onClick={refresh} disabled={refreshing} variant="outline" size="sm">
+            <RefreshCw className={refreshing ? "mr-2 h-4 w-4 animate-spin" : "mr-2 h-4 w-4"} />
+            {refreshing ? "Fetching…" : "Refresh"}
+          </Button>
+        </div>
       </header>
 
       {/* Metrics */}
