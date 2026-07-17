@@ -1,7 +1,9 @@
-import { ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
 import type { Item } from "@/lib/types";
 
 const REGION_FLAG: Record<string, string> = {
@@ -28,7 +30,7 @@ export function ItemCard({ item }: { item: Item }) {
   return (
     <Card
       className={cn(
-        "group transition-all hover:shadow-md hover:border-primary/30",
+        "group transition-all hover:shadow-lg hover:shadow-primary/5 hover:border-primary/40",
         item.isNew && "border-l-4 border-l-primary",
       )}
     >
@@ -74,17 +76,28 @@ export function ItemCard({ item }: { item: Item }) {
             </Badge>
           ))}
         </div>
-        {item.url && (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+        <div className="flex items-center gap-3 pt-1">
+          {item.url && (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              Open primary source
+            </a>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => window.open(api.itemPdfUrl(item.uid), "_blank")}
           >
-            <ExternalLink className="h-3.5 w-3.5" />
-            Open primary source
-          </a>
-        )}
+            <Download className="h-3.5 w-3.5" />
+            PDF
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

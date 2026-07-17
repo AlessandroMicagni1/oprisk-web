@@ -23,28 +23,16 @@ function qs(filters: ItemFilters): string {
   return p.toString();
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-// Retry with backoff — tolerates Render free-tier cold starts (~up to ~40s).
-async function get<T>(path: string, attempts = 8): Promise<T> {
-  let lastErr: unknown;
-  for (let i = 0; i < attempts; i++) {
-    try {
-      const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
-      return (await res.json()) as T;
-    } catch (e) {
-      lastErr = e;
-      if (i < attempts - 1) await sleep(Math.min(1000 * 2 ** i, 8000));
-    }
-  }
-  throw lastErr;
+async function get<T>(path: string): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
+  return res.json() as Promise<T>;
 }
 
 async function post<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, { method: "POST" });
   if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
-  return (await res.json()) as T;
+  return res.json() as Promise<T>;
 }
 
 export const api = {
@@ -57,4 +45,6 @@ export const api = {
   markRead: () => post<{ ok: boolean }>("/mark-read"),
   exportUrl: (kind: "csv" | "pdf", filters: ItemFilters = {}) =>
     `${API_BASE}/export.${kind}?${qs(filters)}`,
+  itemPdfUrl: (uid: string) =>
+    `${API_BASE}/item.pdf?uid=${encodeURIComponent(uid)}`,
 };
